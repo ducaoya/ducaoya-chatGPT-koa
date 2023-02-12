@@ -7,6 +7,7 @@ const app = new Koa();
 const router = new Router();
 
 let apis = [];
+let log = [];
 
 /**
  * 创建Api
@@ -35,6 +36,18 @@ function hasApi(key) {
   return result?.api || false;
 }
 
+/**
+ * 记录日志
+ * @param {string} api 接口
+ * @param {any} msg 内容
+ */
+function pushLog(api, content) {
+  log.push({
+    api,
+    content,
+  });
+}
+
 app.use(async (ctx, next) => {
   ctx.set("Access-Control-Allow-Origin", "*");
   ctx.set(
@@ -56,9 +69,24 @@ router.get("/", (ctx) => {
   };
 });
 
+router.get("/log", (ctx) => {
+  ctx.body = {
+    result: "ok",
+    log,
+  };
+});
+
+router.get("/clean_log", (ctx) => {
+  log = [];
+  ctx.body = {
+    result: "ok",
+    log,
+  };
+});
+
 router.get("/create", (ctx) => {
   const { key } = ctx.request.query;
-  console.log("[get] [create] key", key);
+  pushLog("[get] [create] key", key);
 
   if (key) {
     createApi(key);
@@ -75,7 +103,7 @@ router.get("/create", (ctx) => {
 
 router.post("/message", async (ctx) => {
   const { key, msg, opt } = ctx.request.body;
-  console.log("[post] [message] body", { key, msg, opt });
+  pushLog("[post] [message] body", { key, msg, opt });
 
   const api = hasApi(key);
   if (api) {
