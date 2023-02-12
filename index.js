@@ -1,7 +1,7 @@
 import Koa from "koa";
 import Router from "@koa/router";
-import { ChatGPTAPI } from "chatgpt";
 import bodyParser from "koa-bodyparser";
+import { createApi, hasApi } from "./tools";
 
 const app = new Koa();
 const router = new Router();
@@ -20,9 +20,6 @@ app.use(async (ctx, next) => {
   }
 });
 
-let api = null;
-let oldKey = "";
-
 router.get("/", (ctx) => {
   ctx.body = {
     result: "ok",
@@ -33,13 +30,9 @@ router.get("/", (ctx) => {
 router.get("/create", (ctx) => {
   const { key } = ctx.request.query;
   console.log("[get] [create] key", key);
+
   if (key) {
-    if (key !== oldKey) {
-      oldKey = key;
-      api = new ChatGPTAPI({
-        apiKey: key,
-      });
-    }
+    createApi(key);
     ctx.body = {
       result: "ok",
     };
@@ -52,9 +45,10 @@ router.get("/create", (ctx) => {
 });
 
 router.post("/message", async (ctx) => {
-  const { msg, opt } = ctx.request.body;
-  console.log("[post] [message] body", { msg, opt });
+  const { key, msg, opt } = ctx.request.body;
+  console.log("[post] [message] body", { key, msg, opt });
 
+  const api = hasApi(key);
   if (api) {
     const res = await api.sendMessage(msg, opt);
     ctx.body = {
