@@ -108,9 +108,13 @@ router.get("/create", (ctx) => {
 router.post("/message", async (ctx) => {
   const { key, msg, opt } = ctx.request.body;
 
-  const api = hasApi(key);
+  let api = hasApi(key);
 
   let body = {};
+
+  if (!api && key) {
+    api = createApi(key);
+  }
 
   if (api) {
     const res = await api.sendMessage(msg, opt);
