@@ -1,10 +1,39 @@
 import Koa from "koa";
 import Router from "@koa/router";
 import bodyParser from "koa-bodyparser";
-import { createApi, hasApi } from "./tools";
+import { ChatGPTAPI } from "chatgpt";
 
 const app = new Koa();
 const router = new Router();
+
+let apis = [];
+
+/**
+ * 创建Api
+ * @param {string} key
+ */
+function createApi(key) {
+  let api = hasApi(key);
+  if (!api) {
+    api = new ChatGPTAPI({
+      apiKey: key,
+    });
+
+    apis.push({ key, api });
+  }
+
+  return api;
+}
+
+/**
+ * 判断是否有api
+ * @param {string} key
+ * @returns {boolean | object}
+ */
+function hasApi(key) {
+  const result = apis.find((item) => item.key === key);
+  return result.api || false;
+}
 
 app.use(async (ctx, next) => {
   ctx.set("Access-Control-Allow-Origin", "*");
