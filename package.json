@@ -1,0 +1,19 @@
+{
+  "name": "ducaoya-chatgpt-koa",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@koa/router": "^12.0.0",
+    "chatgpt": "^4.2.0",
+    "koa": "^2.14.1",
+    "koa-bodyparser": "^4.3.0"
+  }
+}
