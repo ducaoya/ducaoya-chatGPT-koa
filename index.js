@@ -32,7 +32,7 @@ function createApi(key) {
  */
 function hasApi(key) {
   const result = apis.find((item) => item.key === key);
-  return result.api || false;
+  return result?.api || false;
 }
 
 app.use(async (ctx, next) => {
