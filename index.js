@@ -86,38 +86,47 @@ router.get("/clean_log", (ctx) => {
 
 router.get("/create", (ctx) => {
   const { key } = ctx.request.query;
-  pushLog("[get] [create] key", key);
+
+  let body = {};
 
   if (key) {
     createApi(key);
-    ctx.body = {
+    body = {
       result: "ok",
     };
   } else {
-    ctx.body = {
+    body = {
       result: "error",
       msg: "key 为空",
     };
   }
+
+  pushLog("[get] [create] ", { key, body });
+  ctx.body = body;
 });
 
 router.post("/message", async (ctx) => {
   const { key, msg, opt } = ctx.request.body;
-  pushLog("[post] [message] body", { key, msg, opt });
 
   const api = hasApi(key);
+
+  let body = {};
+
   if (api) {
     const res = await api.sendMessage(msg, opt);
-    ctx.body = {
+    body = {
       result: "ok",
       ...res,
     };
   } else {
-    ctx.body = {
+    body = {
       result: "error",
       msg: "请先初始化 API",
     };
   }
+
+  pushLog("[post] [message] ", { key, msg, opt, body });
+  ctx.body = body;
 });
 
 app.use(bodyParser()).use(router.routes()).use(router.allowedMethods());
