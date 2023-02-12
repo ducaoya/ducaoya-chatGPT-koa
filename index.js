@@ -23,6 +23,13 @@ app.use(async (ctx, next) => {
 let api = null;
 let oldKey = "";
 
+router.get("/", (ctx) => {
+  ctx.body = {
+    result: "ok",
+    msg: "test api ok",
+  };
+});
+
 router.get("/create", (ctx) => {
   const { key } = ctx.request.query;
   console.log("[get] [create] key", key);
